@@ -4,6 +4,7 @@
 #include <time.h>
 #include "category.h"
 #include "gfx.h"
+#include "intro.h"
 #include "game.h"
 
 void draw_category_menu() 
@@ -21,7 +22,6 @@ void draw_category_menu()
     int y_start = 180;
     int spacing = 60;
 
-    // Draw 4 Category Buttons
     char *labels[] = 
     {
         "1. HOME & COLORS",
@@ -32,14 +32,13 @@ void draw_category_menu()
 
     for(int i = 0; i < 4; i++) 
     {
-        gfx_color(220, 220, 220); // Light gray button
+        gfx_color(220, 220, 220); 
         gfx_fillrectangle(x, y_start + (i * spacing), btn_w, btn_h);
         
         gfx_color(0, 0, 0);
         gfx_text(labels[i], x + 20, y_start + (i * spacing) + 30, 1);
     }
 
-    // Back Button
     gfx_color(180, 100, 100);
     gfx_fillrectangle(w/2 - 50, 450, 100, 40);
     gfx_color(255, 255, 255);
@@ -55,7 +54,6 @@ GameState category_handle_click(int mx, int my)
     int y_start = 180;
     int spacing = 60;
 
-    // Check category buttons
     for(int i = 0; i < 4; i++) 
     {
         int ty = y_start + (i * spacing);
@@ -65,18 +63,17 @@ GameState category_handle_click(int mx, int my)
             
             if (i == 3) 
             {
-                // Randomly pick one of the three files
-                int r = (rand() % 3) + 1;
-                sprintf(filename, "data/puzzle%d.txt", r);
+                // We pass "random" so intro_init knows to show the Random Mix screen
+                strcpy(filename, "random");
             } 
-            
             else 
             {
                 sprintf(filename, "data/puzzle%d.txt", i + 1);
             }
 
-            game_init_with_file(filename); 
-            return STATE_PLAYING;
+            // ⭐ IMPORTANT: Initialize intro first
+            intro_init(filename); 
+            return STATE_INTRO;
         }
     }
 

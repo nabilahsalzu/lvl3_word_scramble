@@ -9,6 +9,7 @@
 #include "scoreboard.h"
 #include "result.h"
 #include "category.h"
+#include "intro.h"
 
 int main() 
 {
@@ -57,6 +58,11 @@ int main()
                 else if (state == STATE_CATEGORY) 
                 {
                     state = category_handle_click(mx, my);
+                }
+
+                else if (state == STATE_INTRO) 
+                {
+                    state = intro_handle_click(mx, my);
                 }
 
                 else if (state == STATE_HELP) 
@@ -133,6 +139,11 @@ int main()
             else if (state == STATE_CATEGORY)
             {
                 draw_category_menu();
+            }
+
+            else if (state == STATE_INTRO)
+            {
+                draw_intro();
             }
 
             else if (state == STATE_HELP)
