@@ -5,6 +5,7 @@
 #include "gfx.h"
 #include "game.h"
 #include "menu.h"
+#include "player.h"
 
 int main() 
 {
@@ -20,7 +21,7 @@ int main()
 
     gfx_open(win_width, win_height, "WORD SCRAMBLE GAME");
 
-    GameState state = STATE_MENU;
+    GameState state = STATE_SELECT_PLAYER;
     int needs_redraw = 1;
 
     // For controlling timer redraw (once per second)
@@ -29,24 +30,42 @@ int main()
     while (state != STATE_EXIT) {
         time_t now = time(NULL);
 
-        // -------- INPUT --------
-        // Use a while loop to instantly drain any queued up events (like mouse movements)
-        while (gfx_event_waiting()) {
-            char event = gfx_wait();
+    // -------- INPUT --------
+    while (gfx_event_waiting()) {
+        char event = gfx_wait();
 
-            if (event == 1) { // mouse click
-                int mx = gfx_xpos();
-                int my = gfx_ypos();
+        // Mouse click
+        if (event == 1) {
+            int mx = gfx_xpos();
+            int my = gfx_ypos();
 
-                if (state == STATE_MENU) state = menu_handle_click(mx, my);
-                else if (state == STATE_HELP) state = help_handle_click(mx, my);
-                else if (state == STATE_PLAYING) state = game_handle_input(event);
-                
-                // ONLY flag a redraw when an actual click happens
-                needs_redraw = 1; 
+            if (state == STATE_SELECT_PLAYER) {
+                state = player_handle_click(mx, my);
             }
+            else if (state == STATE_MENU) {
+                state = menu_handle_click(mx, my);
+            }
+            else if (state == STATE_HELP) {
+                state = help_handle_click(mx, my);
+            }
+            else if (state == STATE_PLAYING) {
+                state = game_handle_input(event);
+            }
+
+            needs_redraw = 1;
         }
 
+        // KEYBOARD INPUT (THIS IS WHAT YOU WERE MISSING)
+        else {
+            if (state == STATE_SELECT_PLAYER) {
+                player_handle_key(event);
+                needs_redraw = 1;
+            }
+            else if (state == STATE_PLAYING) {
+                state = game_handle_input(event);
+            }
+        }
+    }
         // -------- UPDATE GAME --------
         if (state == STATE_PLAYING) {
             state = game_update();
@@ -66,9 +85,11 @@ int main()
             gfx_color(255, 255, 255);
             gfx_fillrectangle(0, 0, win_width, win_height);
 
-            if (state == STATE_MENU) draw_menu();
+            if (state == STATE_SELECT_PLAYER) draw_player_select();
+            else if (state == STATE_MENU) draw_menu();
             else if (state == STATE_HELP) draw_help();
             else if (state == STATE_PLAYING) draw_game();
+            
 
             gfx_flush();
             needs_redraw = 0;

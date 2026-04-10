@@ -2,13 +2,7 @@
 #define GAME_H
 
 #include "gfx.h"
-
-typedef enum {
-    STATE_MENU,
-    STATE_HELP,
-    STATE_PLAYING,
-    STATE_EXIT
-} GameState;
+#include "state.h"
 
 void draw_game();
 void game_init();
