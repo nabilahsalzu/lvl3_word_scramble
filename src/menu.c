@@ -44,11 +44,23 @@ void draw_menu()
     gfx_text("Help", x + 120, y2 + 25, 1);
     gfx_text("Score Board", x + 95, y3 + 25, 1);
     gfx_text("Exit", x + 120, y4 + 25, 1);
+
+    // CHANGE PLAYER BUTTON (Bottom Right)
+    int cp_w = 140;
+    int cp_h = 35;
+    int cp_x = w - cp_w - 20;
+    int cp_y = h - cp_h - 20;
+
+    gfx_color(170, 200, 230); // Light blue for Change Player
+    gfx_fillrectangle(cp_x, cp_y, cp_w, cp_h);
+    gfx_color(0, 0, 0);
+    gfx_text("Change Player", cp_x + 15, cp_y + 22, 1);
 }
 
 GameState menu_handle_click(int mx, int my) 
 {
     int w = gfx_xsize();
+    int h = gfx_ysize();
     int btn_w = 300;
     int btn_h = 40;
     int x = (w - btn_w) / 2;
@@ -71,7 +83,7 @@ GameState menu_handle_click(int mx, int my)
         return STATE_HELP;
     }
 
-    // Score Board (NEW)
+    // Score Board
     if (mx >= x && mx <= x + btn_w && my >= y3 && my <= y3 + btn_h)
     {
         return STATE_SCOREBOARD;
@@ -81,6 +93,17 @@ GameState menu_handle_click(int mx, int my)
     if (mx >= x && mx <= x + btn_w && my >= y4 && my <= y4 + btn_h)
     {
         return STATE_EXIT;
+    }
+
+    // Change Player Click Check
+    int cp_w = 140;
+    int cp_h = 35;
+    int cp_x = w - cp_w - 20;
+    int cp_y = h - cp_h - 20;
+
+    if (mx >= cp_x && mx <= cp_x + cp_w && my >= cp_y && my <= cp_y + cp_h)
+    {
+        return STATE_SELECT_PLAYER;
     }
 
     return STATE_MENU;

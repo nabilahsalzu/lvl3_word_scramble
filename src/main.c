@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "player.h"
 #include "scoreboard.h"
+#include "result.h"
 
 int main() 
 {
@@ -55,6 +56,15 @@ int main()
             else if (state == STATE_SCOREBOARD)
             {
                 state = scoreboard_handle_click(mx, my);
+            }
+            else if (state == STATE_RESULT)
+            {
+                state = result_handle_click(mx, my);
+
+                if (state == STATE_PLAYING)
+                {
+                    game_init(); // restart game
+                }
             }
 
             needs_redraw = 1;
@@ -109,6 +119,10 @@ int main()
             else if (state == STATE_SCOREBOARD)
             {
                 draw_scoreboard();
+            }
+            else if (state == STATE_RESULT)
+            {
+                draw_result();
             }
             
 

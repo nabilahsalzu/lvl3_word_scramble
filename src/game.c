@@ -6,6 +6,7 @@
 #include "game.h"
 #include "gfx.h"
 #include "player.h" 
+#include "result.h"
 
 #define MAX_WORDS 70
 #define MAX_LENGTH 20
@@ -242,7 +243,8 @@ GameState game_handle_input(char c) {
         my >= quit_btn.y && my <= quit_btn.y + quit_btn.h)
     {
         save_final_score();
-        return STATE_MENU;
+        result_set_score(score);
+        return STATE_RESULT;
     }
 
     if (showing_feedback) return STATE_PLAYING;
@@ -308,7 +310,8 @@ GameState game_update() {
     if (current_index >= word_count)
     {
         save_final_score();
-        return STATE_MENU;
+        result_set_score(score);
+        return STATE_RESULT;
     }
 
     if (showing_feedback) {
@@ -328,7 +331,8 @@ GameState game_update() {
 
     if (lives <= 0) {
         save_final_score();
-        return STATE_MENU;
+        result_set_score(score);
+        return STATE_RESULT;
     }
 
     return STATE_PLAYING;
