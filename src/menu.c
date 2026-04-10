@@ -5,7 +5,6 @@
 #include "player.h"
 #include "scoreboard.h"
 
-
 void draw_menu() 
 {
     int w = gfx_xsize();
@@ -33,7 +32,6 @@ void draw_menu()
 
     // Buttons
     gfx_color(200, 200, 200);
-
     gfx_fillrectangle(x, y1, btn_w, btn_h);
     gfx_fillrectangle(x, y2, btn_w, btn_h);
     gfx_fillrectangle(x, y3, btn_w, btn_h);
@@ -70,11 +68,10 @@ GameState menu_handle_click(int mx, int my)
     int y3 = 320;
     int y4 = 380;
 
-    // New Game
+    // New Game -> Go to Category Selection
     if (mx >= x && mx <= x + btn_w && my >= y1 && my <= y1 + btn_h)
     {
-        game_init();
-        return STATE_PLAYING;
+        return STATE_CATEGORY;
     }
 
     // Help

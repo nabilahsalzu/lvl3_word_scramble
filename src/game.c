@@ -20,6 +20,7 @@ int word_count = 0;
 char current_word[MAX_LENGTH];
 char scrambled[MAX_LENGTH];
 char input[MAX_LENGTH] = "";
+char current_category[50] = "WORD SCRAMBLE"; // Variable to store chosen category
 
 int input_index = 0;
 int score = 0;
@@ -52,10 +53,13 @@ typedef struct {
 
 Button submit_btn, back_btn, reset_btn, quit_btn;
 
-// -------- LOAD WORDS --------
-void load_words() {
-    FILE *file = fopen("data/puzzle1.txt", "r");
-    if (!file) return;
+// -------- LOAD WORDS FROM SPECIFIC FILE --------
+void load_words_from_file(const char* filename) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        printf("Error: Could not open %s\n", filename);
+        return;
+    }
 
     word_count = 0;
     while (word_count < MAX_WORDS &&
@@ -65,13 +69,10 @@ void load_words() {
 
     fclose(file);
 
-    // -------- SHUFFLE WORDS (GUI Version) --------
     if (word_count > 1) {
         for (int i = word_count - 1; i > 0; i--) {
             int j = rand() % (i + 1);
             char temp[MAX_LENGTH];
-            
-            // Swap words[i] and words[j]
             strcpy(temp, words[i]);
             strcpy(words[i], words[j]);
             strcpy(words[j], temp);
@@ -99,9 +100,8 @@ void scramble_word(char word[]) {
 
 // -------- START NEW ROUND --------
 void next_word() {
-    if (current_index >= word_count) 
-    {
-        current_index = word_count; // lock
+    if (current_index >= word_count) {
+        return; 
     }
 
     strcpy(current_word, words[current_index]);
@@ -112,7 +112,6 @@ void next_word() {
     input[0] = '\0';
     showing_feedback = 0;
 
-    // Setup letter buttons
     int len = strlen(scrambled);
     int total_width = len * (BUTTON_SIZE + BUTTON_SPACING) - BUTTON_SPACING;
     int start_x = (gfx_xsize() - total_width) / 2;
@@ -128,7 +127,6 @@ void next_word() {
         letter_buttons[i].clicked = 0;
     }
 
-    // Button positions
     submit_btn.x = 100; submit_btn.y = 520;
     submit_btn.w = 120; submit_btn.h = 40;
 
@@ -145,26 +143,48 @@ void next_word() {
     current_index++;
 }
 
-// -------- INIT GAME --------
-void game_init() {
+// -------- INIT GAME WITH CATEGORY --------
+void game_init_with_file(const char* filename) {
     srand(time(NULL));
-    load_words(); 
+    load_words_from_file(filename); 
+
+    // Determine category display name based on filename
+    if (strstr(filename, "puzzle1.txt")) strcpy(current_category, "HOME & COLORS");
+    else if (strstr(filename, "puzzle2.txt")) strcpy(current_category, "NATURE & SCHOOL");
+    else if (strstr(filename, "puzzle3.txt")) strcpy(current_category, "TECH & SCIENCE");
+    else strcpy(current_category, "RANDOM MIX");
 
     score = 0;
     lives = 3;
     current_index = 0;
     showing_feedback = 0;
-    
-    // FIX: Reset the save flag so the score can be saved when this game ends
     has_saved_score = 0; 
 
     next_word();
 }
 
+void game_init() {
+    game_init_with_file("data/puzzle1.txt");
+}
+
+// -------- SAVE SCORE --------
+void save_final_score() {
+    if (has_saved_score) return;
+    has_saved_score = 1;
+
+    char path[64];
+    sprintf(path, "players/%s.txt", current_player.name);
+
+    FILE *f = fopen(path, "a");
+    if (!f) return;
+
+    fprintf(f, "%d\n", score);
+    fclose(f);
+}
+
 // -------- DRAW GAME --------
 void draw_game() {
     int w = gfx_xsize();
-    int h = gfx_ysize();
     
     gfx_color(0,0,0);
 
@@ -174,8 +194,10 @@ void draw_game() {
     gfx_color(255, 255, 255);
     gfx_text("QUIT", quit_btn.x + 20, quit_btn.y + 20, 1);
 
+    // Display the chosen Category instead of "WORD SCRAMBLE"
     gfx_color(0,0,0);
-    gfx_text("WORD SCRAMBLE", w/2 - 120, 80, 2);
+    int text_x = w/2 - (strlen(current_category) * 6); // Simple centering calculation
+    gfx_text(current_category, text_x, 80, 2);
 
     // Info
     char info[100];
@@ -192,7 +214,7 @@ void draw_game() {
         if (time_left < 0) time_left = 0;
         char timer[50];
         sprintf(timer, "Time Left: %d", time_left);
-        if (time_left <= 5) gfx_color(255, 0, 0);
+        if (time_left <= 3) gfx_color(255, 0, 0);
         else gfx_color(0, 0, 0);
         gfx_text(timer, w/2 - 55, 190, 1);
     }
@@ -204,7 +226,6 @@ void draw_game() {
     gfx_text("Your guess:", w/2 - 100, 340, 1);
     gfx_text(input, w/2 - 60, 380, 2);
 
-    // Letter Buttons
     for (int i = 0; i < button_count; i++) {
         if (letter_buttons[i].clicked) gfx_color(180,180,180);
         else gfx_color(200,200,200);
@@ -215,7 +236,6 @@ void draw_game() {
         gfx_text(str, letter_buttons[i].x + 15, letter_buttons[i].y + 25, 1);
     }
 
-    // Action Buttons
     gfx_color(100,200,100);
     gfx_fillrectangle(submit_btn.x, submit_btn.y, submit_btn.w, submit_btn.h);
     gfx_color(0,0,0);
@@ -307,7 +327,7 @@ GameState game_handle_input(char c) {
 
 // -------- UPDATE --------
 GameState game_update() {
-    if (current_index >= word_count)
+    if (current_index >= word_count && !showing_feedback)
     {
         save_final_score();
         result_set_score(score);
@@ -316,41 +336,29 @@ GameState game_update() {
 
     if (showing_feedback) {
         if (time(NULL) >= feedback_expiry) {
+            if (lives <= 0 || current_index >= word_count) {
+                save_final_score();
+                result_set_score(score);
+                return STATE_RESULT;
+            }
             next_word();
         }
         return STATE_PLAYING;
     }
 
-    int time_left = time_limit - (time(NULL) - start_time);
-    if (time_left <= 0) {
+    int elapsed = (int)(time(NULL) - start_time);
+    if (elapsed >= time_limit) {
         lives--;
         sprintf(feedback_msg, "TIME'S UP! It was: %s", current_word);
         showing_feedback = 1;
         feedback_expiry = time(NULL) + 2;
     }
 
-    if (lives <= 0) {
+    if (lives <= 0 && !showing_feedback) {
         save_final_score();
         result_set_score(score);
         return STATE_RESULT;
     }
 
     return STATE_PLAYING;
-}
-
-void save_final_score()
-{
-    // If we've already saved for this session, don't save again.
-    // Note: game_init() resets this to 0 for a new session.
-    if (has_saved_score) return;
-    has_saved_score = 1;
-
-    char path[64];
-    sprintf(path, "players/%s.txt", current_player.name);
-
-    FILE *f = fopen(path, "a");
-    if (!f) return;
-
-    fprintf(f, "%d\n", score);
-    fclose(f);
 }

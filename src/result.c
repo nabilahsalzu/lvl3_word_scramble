@@ -81,7 +81,7 @@ GameState result_handle_click(int mx, int my)
     if (mx >= play_again_btn.x && mx <= play_again_btn.x + play_again_btn.w &&
         my >= play_again_btn.y && my <= play_again_btn.y + play_again_btn.h)
     {
-        return STATE_PLAYING;
+        return STATE_CATEGORY;
     }
 
     // Back to Menu
