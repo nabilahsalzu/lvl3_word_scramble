@@ -1,10 +1,11 @@
-#include "game.h"
-#include "gfx.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include "game.h"
+#include "gfx.h"
+#include "player.h" 
 
 #define MAX_WORDS 70
 #define MAX_LENGTH 20
@@ -22,6 +23,7 @@ char input[MAX_LENGTH] = "";
 int input_index = 0;
 int score = 0;
 int lives = 3;
+int has_saved_score = 0;
 
 time_t start_time;
 int time_limit = 10;
@@ -63,8 +65,6 @@ void load_words() {
     fclose(file);
 
     // -------- SHUFFLE WORDS (GUI Version) --------
-    // This shuffles the order of words in the array so every 
-    // playthrough presents words in a different sequence.
     if (word_count > 1) {
         for (int i = word_count - 1; i > 0; i--) {
             int j = rand() % (i + 1);
@@ -98,8 +98,9 @@ void scramble_word(char word[]) {
 
 // -------- START NEW ROUND --------
 void next_word() {
-    if (current_index >= word_count) {
-        current_index = 0; // Loop back to the start of the shuffled list
+    if (current_index >= word_count) 
+    {
+        current_index = word_count; // lock
     }
 
     strcpy(current_word, words[current_index]);
@@ -146,12 +147,15 @@ void next_word() {
 // -------- INIT GAME --------
 void game_init() {
     srand(time(NULL));
-    load_words(); // This now loads AND shuffles the word list
+    load_words(); 
 
     score = 0;
     lives = 3;
     current_index = 0;
     showing_feedback = 0;
+    
+    // FIX: Reset the save flag so the score can be saved when this game ends
+    has_saved_score = 0; 
 
     next_word();
 }
@@ -235,7 +239,9 @@ GameState game_handle_input(char c) {
     int my = gfx_ypos();
 
     if (mx >= quit_btn.x && mx <= quit_btn.x + quit_btn.w &&
-        my >= quit_btn.y && my <= quit_btn.y + quit_btn.h) {
+        my >= quit_btn.y && my <= quit_btn.y + quit_btn.h)
+    {
+        save_final_score();
         return STATE_MENU;
     }
 
@@ -299,6 +305,12 @@ GameState game_handle_input(char c) {
 
 // -------- UPDATE --------
 GameState game_update() {
+    if (current_index >= word_count)
+    {
+        save_final_score();
+        return STATE_MENU;
+    }
+
     if (showing_feedback) {
         if (time(NULL) >= feedback_expiry) {
             next_word();
@@ -315,8 +327,26 @@ GameState game_update() {
     }
 
     if (lives <= 0) {
+        save_final_score();
         return STATE_MENU;
     }
 
     return STATE_PLAYING;
+}
+
+void save_final_score()
+{
+    // If we've already saved for this session, don't save again.
+    // Note: game_init() resets this to 0 for a new session.
+    if (has_saved_score) return;
+    has_saved_score = 1;
+
+    char path[64];
+    sprintf(path, "players/%s.txt", current_player.name);
+
+    FILE *f = fopen(path, "a");
+    if (!f) return;
+
+    fprintf(f, "%d\n", score);
+    fclose(f);
 }

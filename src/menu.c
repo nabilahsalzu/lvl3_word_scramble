@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "gfx.h"
 #include "player.h"
+#include "scoreboard.h"
 
 
 void draw_menu() 
@@ -28,17 +29,21 @@ void draw_menu()
     int y1 = 200;
     int y2 = 260;
     int y3 = 320;
+    int y4 = 380; 
 
     // Buttons
     gfx_color(200, 200, 200);
+
     gfx_fillrectangle(x, y1, btn_w, btn_h);
     gfx_fillrectangle(x, y2, btn_w, btn_h);
     gfx_fillrectangle(x, y3, btn_w, btn_h);
+    gfx_fillrectangle(x, y4, btn_w, btn_h);
 
     gfx_color(0, 0, 0);
     gfx_text("New Game", x + 100, y1 + 25, 1);
     gfx_text("Help", x + 120, y2 + 25, 1);
-    gfx_text("Exit", x + 120, y3 + 25, 1);
+    gfx_text("Score Board", x + 95, y3 + 25, 1);
+    gfx_text("Exit", x + 120, y4 + 25, 1);
 }
 
 GameState menu_handle_click(int mx, int my) 
@@ -48,21 +53,32 @@ GameState menu_handle_click(int mx, int my)
     int btn_h = 40;
     int x = (w - btn_w) / 2;
 
+    int y1 = 200;
+    int y2 = 260;
+    int y3 = 320;
+    int y4 = 380;
+
     // New Game
-    if (mx >= x && mx <= x + btn_w && my >= 200 && my <= 240)
+    if (mx >= x && mx <= x + btn_w && my >= y1 && my <= y1 + btn_h)
     {
-    	game_init();
-		return STATE_PLAYING;
+        game_init();
+        return STATE_PLAYING;
     }
 
     // Help
-    if (mx >= x && mx <= x + btn_w && my >= 260 && my <= 300)
+    if (mx >= x && mx <= x + btn_w && my >= y2 && my <= y2 + btn_h)
     {
-    	return STATE_HELP;
+        return STATE_HELP;
+    }
+
+    // Score Board (NEW)
+    if (mx >= x && mx <= x + btn_w && my >= y3 && my <= y3 + btn_h)
+    {
+        return STATE_SCOREBOARD;
     }
 
     // Exit
-    if (mx >= x && mx <= x + btn_w && my >= 320 && my <= 360)
+    if (mx >= x && mx <= x + btn_w && my >= y4 && my <= y4 + btn_h)
     {
         return STATE_EXIT;
     }

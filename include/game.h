@@ -7,6 +7,7 @@
 void draw_game();
 void game_init();
 void draw_timer_only();
+void save_final_score();
 
 GameState game_handle_input(char c);
 GameState game_update();

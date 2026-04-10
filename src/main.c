@@ -6,6 +6,7 @@
 #include "game.h"
 #include "menu.h"
 #include "player.h"
+#include "scoreboard.h"
 
 int main() 
 {
@@ -51,6 +52,10 @@ int main()
             else if (state == STATE_PLAYING) {
                 state = game_handle_input(event);
             }
+            else if (state == STATE_SCOREBOARD)
+            {
+                state = scoreboard_handle_click(mx, my);
+            }
 
             needs_redraw = 1;
         }
@@ -85,10 +90,26 @@ int main()
             gfx_color(255, 255, 255);
             gfx_fillrectangle(0, 0, win_width, win_height);
 
-            if (state == STATE_SELECT_PLAYER) draw_player_select();
-            else if (state == STATE_MENU) draw_menu();
-            else if (state == STATE_HELP) draw_help();
-            else if (state == STATE_PLAYING) draw_game();
+            if (state == STATE_SELECT_PLAYER)
+            {
+                draw_player_select();
+            }
+            else if (state == STATE_MENU)
+            {
+                draw_menu();
+            }
+            else if (state == STATE_HELP)
+            {
+                draw_help();
+            }
+            else if (state == STATE_PLAYING)
+            {
+                draw_game();
+            }
+            else if (state == STATE_SCOREBOARD)
+            {
+                draw_scoreboard();
+            }
             
 
             gfx_flush();

@@ -53,13 +53,15 @@ void load_existing_players() {
     }
 }
 
-void save_player_data() {
-    if (strlen(current_player.name) == 0) return;
+void save_player_data()
+{
     char path[64];
     sprintf(path, "players/%s.txt", current_player.name);
-    FILE *f = fopen(path, "w");
-    if (f) {
-        fprintf(f, "%d", current_player.high_score);
+
+    FILE *f = fopen(path, "a"); // append mode
+    if (f)
+    {
+        fprintf(f, "%d\n", current_player.high_score);
         fclose(f);
     }
 }
@@ -203,3 +205,4 @@ void player_handle_key(char c) {
         }
     }
 }
+
