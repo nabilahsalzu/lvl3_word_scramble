@@ -1,8 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "gfx.h"
 #include "state.h"
+
+extern int score;
+extern int lives;
 
 void draw_game();
 void game_init();
@@ -12,8 +14,5 @@ void game_init_with_file(const char *filename);
 
 GameState game_handle_input(char c);
 GameState game_update();
-
-extern int score;
-extern int lives;
 
 #endif

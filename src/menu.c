@@ -18,7 +18,7 @@ void draw_menu()
     // Personalized Greeting
     char greeting[64];
     sprintf(greeting, "Hai %s", current_player.name);
-    gfx_color(50, 50, 150); // Dark blue color for greeting
+    gfx_color(50, 50, 150); // Dark blue
     gfx_text(greeting, w/2 - (strlen(greeting) * 5), 130, 1);
 
     int btn_w = 300;
@@ -49,7 +49,7 @@ void draw_menu()
     int cp_x = w - cp_w - 20;
     int cp_y = h - cp_h - 20;
 
-    gfx_color(170, 200, 230); // Light blue for Change Player
+    gfx_color(170, 200, 230); // Light blue
     gfx_fillrectangle(cp_x, cp_y, cp_w, cp_h);
     gfx_color(0, 0, 0);
     gfx_text("Change Player", cp_x + 15, cp_y + 22, 1);
@@ -68,7 +68,7 @@ GameState menu_handle_click(int mx, int my)
     int y3 = 320;
     int y4 = 380;
 
-    // New Game -> Go to Category Selection
+    // New Game -> Go to Category Selection first
     if (mx >= x && mx <= x + btn_w && my >= y1 && my <= y1 + btn_h)
     {
         return STATE_CATEGORY;
@@ -127,8 +127,11 @@ void draw_help()
 GameState help_handle_click(int mx, int my) 
 {
     int w = gfx_xsize();
-    if (mx >= w/2 - 50 && mx <= w/2 + 50 && my >= 350 && my <= 390) {
+
+    if (mx >= w/2 - 50 && mx <= w/2 + 50 && my >= 350 && my <= 390) 
+    {
         return STATE_MENU;
     }
+
     return STATE_HELP;
 }

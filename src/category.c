@@ -6,7 +6,8 @@
 #include "gfx.h"
 #include "game.h"
 
-void draw_category_menu() {
+void draw_category_menu() 
+{
     int w = gfx_xsize();
     int h = gfx_ysize();
 
@@ -21,14 +22,16 @@ void draw_category_menu() {
     int spacing = 60;
 
     // Draw 4 Category Buttons
-    char *labels[] = {
+    char *labels[] = 
+    {
         "1. HOME & COLORS",
         "2. NATURE & SCHOOL",
         "3. TECH & SCIENCE",
         "4. RANDOM MIX"
     };
 
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++) 
+    {
         gfx_color(220, 220, 220); // Light gray button
         gfx_fillrectangle(x, y_start + (i * spacing), btn_w, btn_h);
         
@@ -43,7 +46,8 @@ void draw_category_menu() {
     gfx_text("BACK", w/2 - 25, 475, 1);
 }
 
-GameState category_handle_click(int mx, int my) {
+GameState category_handle_click(int mx, int my) 
+{
     int w = gfx_xsize();
     int btn_w = 350;
     int btn_h = 45;
@@ -52,28 +56,32 @@ GameState category_handle_click(int mx, int my) {
     int spacing = 60;
 
     // Check category buttons
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 4; i++) 
+    {
         int ty = y_start + (i * spacing);
-        if (mx >= x && mx <= x + btn_w && my >= ty && my <= ty + btn_h) {
+        if (mx >= x && mx <= x + btn_w && my >= ty && my <= ty + btn_h) 
+        {
             char filename[32];
             
-            if (i == 3) {
+            if (i == 3) 
+            {
                 // Randomly pick one of the three files
                 int r = (rand() % 3) + 1;
                 sprintf(filename, "data/puzzle%d.txt", r);
-            } else {
+            } 
+            
+            else 
+            {
                 sprintf(filename, "data/puzzle%d.txt", i + 1);
             }
 
-            // Initialize game with the specific file
-            // Note: You need to update your game_init in game.c to take a string argument
             game_init_with_file(filename); 
             return STATE_PLAYING;
         }
     }
 
-    // Back to Menu
-    if (mx >= w/2 - 50 && mx <= w/2 + 50 && my >= 450 && my <= 490) {
+    if (mx >= w/2 - 50 && mx <= w/2 + 50 && my >= 450 && my <= 490) 
+    {
         return STATE_MENU;
     }
 

@@ -31,7 +31,8 @@ static void load_scores()
     }
     
     // The last score in the file is the "latest" one played
-    if (score_count > 0) {
+    if (score_count > 0) 
+    {
         latest_score = scores[score_count - 1];
     }
 
@@ -70,12 +71,13 @@ void draw_scoreboard()
     {
         gfx_text("No scores yet. Play a game!", w/2 - 120, 200, 1);
     }
+
     else
     {
         gfx_text("TOP 10 BEST SCORES", w/2 - 120, 120, 1);
 
         int y = 170;
-        int found_latest = 0; // Ensure we only highlight the latest once if there are duplicates
+        int found_latest = 0; // Ensure to highlight the latest once if there are duplicates
 
         for (int i = 0; i < score_count; i++)
         {
@@ -83,17 +85,16 @@ void draw_scoreboard()
             gfx_color(0, 0, 0);
             char suffix[20] = "";
 
-            // 1. Highlight Best Score (Gold/Yellow)
-            if (i == 0) {
-                gfx_color(212, 175, 55); // Gold color
+            // Best Score
+            if (i == 0) 
+            {
+                gfx_color(212, 175, 55); // Gold 
                 strcpy(suffix, " (BEST)");
             } 
             
-            // 2. Highlight Latest Score (Blue)
-            // We check if this entry matches the latest_score value 
-            // and if we haven't highlighted a "latest" tag yet in this session
+            // Latest Score
             if (scores[i] == latest_score && !found_latest) {
-                gfx_color(0, 100, 255); // Blue color
+                gfx_color(0, 100, 255); // Blue
                 strcat(suffix, " (LATEST)");
                 found_latest = 1;
             }
@@ -119,7 +120,6 @@ GameState scoreboard_handle_click(int mx, int my)
 {
     int w = gfx_xsize();
 
-    // Adjusted Y to match the new draw position (420 instead of 380)
     if (mx >= w/2 - 50 && mx <= w/2 + 50 &&
         my >= 420 && my <= 460)
     {

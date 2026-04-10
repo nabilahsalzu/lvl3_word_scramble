@@ -10,15 +10,12 @@ int high_score;
 
 extern Player current_player;
 
-// Drawing functions
 void draw_player_select();
-
-// Input handling
-GameState player_handle_click(int mx, int my);
 void player_handle_key(char c);
-
-// Data Management
 void save_player_data();
 void load_player_data(const char* name);
+
+GameState player_handle_click(int mx, int my);
+
 
 #endif

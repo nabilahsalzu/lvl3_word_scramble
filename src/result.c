@@ -7,7 +7,8 @@
 static int final_score = 0;
 
 // Buttons
-typedef struct {
+typedef struct 
+{
     int x, y, w, h;
 } Button;
 
@@ -39,7 +40,7 @@ void draw_result()
     char score_text[100];
     sprintf(score_text, "Final Score: %d", final_score);
 
-    gfx_color(0, 100, 255); // nice blue highlight
+    gfx_color(0, 100, 255); // blue
     gfx_text(score_text, w/2 - 120, 220, 2);
 
     // Buttons position
@@ -55,38 +56,30 @@ void draw_result()
 
     // PLAY AGAIN button
     gfx_color(100, 200, 100);
-    gfx_fillrectangle(play_again_btn.x, play_again_btn.y,
-                      play_again_btn.w, play_again_btn.h);
+    gfx_fillrectangle(play_again_btn.x, play_again_btn.y, play_again_btn.w, play_again_btn.h);
 
     gfx_color(0, 0, 0);
-    gfx_text("PLAY AGAIN",
-             play_again_btn.x + 10,
-             play_again_btn.y + 30, 1);
+    gfx_text("PLAY AGAIN", play_again_btn.x + 10, play_again_btn.y + 30, 1);
 
     // MAIN MENU button
     gfx_color(200, 100, 100);
-    gfx_fillrectangle(menu_btn.x, menu_btn.y,
-                      menu_btn.w, menu_btn.h);
+    gfx_fillrectangle(menu_btn.x, menu_btn.y, menu_btn.w, menu_btn.h);
 
     gfx_color(0, 0, 0);
-    gfx_text("MAIN MENU",
-             menu_btn.x + 10,
-             menu_btn.y + 30, 1);
+    gfx_text("MAIN MENU", menu_btn.x + 10, menu_btn.y + 30, 1);
 }
 
 // -------- HANDLE CLICK --------
 GameState result_handle_click(int mx, int my)
 {
     // Play Again
-    if (mx >= play_again_btn.x && mx <= play_again_btn.x + play_again_btn.w &&
-        my >= play_again_btn.y && my <= play_again_btn.y + play_again_btn.h)
+    if (mx >= play_again_btn.x && mx <= play_again_btn.x + play_again_btn.w && my >= play_again_btn.y && my <= play_again_btn.y + play_again_btn.h)
     {
         return STATE_CATEGORY;
     }
 
     // Back to Menu
-    if (mx >= menu_btn.x && mx <= menu_btn.x + menu_btn.w &&
-        my >= menu_btn.y && my <= menu_btn.y + menu_btn.h)
+    if (mx >= menu_btn.x && mx <= menu_btn.x + menu_btn.w && my >= menu_btn.y && my <= menu_btn.y + menu_btn.h)
     {
         return STATE_MENU;
     }

@@ -2,7 +2,6 @@
 #define MENU_H
 
 #include "state.h"
-#include "game.h" 
 
 void draw_menu();
 void draw_help();
