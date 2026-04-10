@@ -158,7 +158,6 @@ void game_init_with_file(const char* filename)
     srand(time(NULL));
     load_words_from_file(filename); 
 
-    // Determine category display name based on filename
     if (strstr(filename, "puzzle1.txt")) strcpy(current_category, "HOME & COLORS");
     else if (strstr(filename, "puzzle2.txt")) strcpy(current_category, "NATURE & SCHOOL");
     else if (strstr(filename, "puzzle3.txt")) strcpy(current_category, "TECH & SCIENCE");
@@ -207,9 +206,8 @@ void draw_game()
     gfx_color(255, 255, 255);
     gfx_text("QUIT", quit_btn.x + 20, quit_btn.y + 20, 1);
 
-    // Display the chosen Category instead of "WORD SCRAMBLE"
     gfx_color(0,0,0);
-    int text_x = w/2 - (strlen(current_category) * 6); // Simple centering calculation
+    int text_x = w/2 - (strlen(current_category) * 6); 
     gfx_text(current_category, text_x, 80, 2);
 
     // Info
@@ -224,7 +222,6 @@ void draw_game()
         else gfx_color(200, 0, 0);
         gfx_text(feedback_msg, w/2 - 120, 190, 1);
     } 
-    
     else 
     {
         int time_left = time_limit - (time(NULL) - start_time);
@@ -245,15 +242,8 @@ void draw_game()
 
     for (int i = 0; i < button_count; i++) 
     {
-        if (letter_buttons[i].clicked)
-        {
-            gfx_color(180,180,180);
-        }
-
-        else
-        {
-            gfx_color(200,200,200);
-        }
+        if (letter_buttons[i].clicked) gfx_color(180,180,180);
+        else gfx_color(200,200,200);
 
         gfx_fillrectangle(letter_buttons[i].x, letter_buttons[i].y,letter_buttons[i].width, letter_buttons[i].height);
         gfx_color(0,0,0);
@@ -289,6 +279,7 @@ GameState game_handle_input(char c)
     {
         save_final_score();
         result_set_score(score);
+        result_set_end_reason(2); // QUIT
         return STATE_RESULT;
     }
 
@@ -318,7 +309,6 @@ GameState game_handle_input(char c)
             score += 10;
             sprintf(feedback_msg, "CORRECT! +10 Points");
         } 
-        
         else 
         {
             lives--;
@@ -366,6 +356,7 @@ GameState game_update()
     {
         save_final_score();
         result_set_score(score);
+        result_set_end_reason(0); // FINISH ALL
         return STATE_RESULT;
     }
 
@@ -373,10 +364,18 @@ GameState game_update()
     {
         if (time(NULL) >= feedback_expiry) 
         {
-            if (lives <= 0 || current_index >= word_count) 
+            if (lives <= 0) 
             {
                 save_final_score();
                 result_set_score(score);
+                result_set_end_reason(1); // ZERO LIVES
+                return STATE_RESULT;
+            }
+            if (current_index >= word_count)
+            {
+                save_final_score();
+                result_set_score(score);
+                result_set_end_reason(0); // FINISH ALL
                 return STATE_RESULT;
             }
             next_word();
@@ -397,6 +396,7 @@ GameState game_update()
     {
         save_final_score();
         result_set_score(score);
+        result_set_end_reason(1); // ZERO LIVES
         return STATE_RESULT;
     }
 

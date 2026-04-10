@@ -31,9 +31,6 @@ void intro_init(const char* filename)
         current_category_id = 3;
     }
     
-    // Note: If the user chose "Random Mix" in category.c, the code there 
-    // randomly picks puzzle1, 2, or 3. If you want the intro to say "RANDOM MIX" 
-    // specifically, you would need to pass a special flag from category_handle_click.
 }
 
 void draw_intro() 
