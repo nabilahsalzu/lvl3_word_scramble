@@ -27,7 +27,7 @@ void draw_category_menu()
         "1. HOME & COLORS",
         "2. NATURE & SCHOOL",
         "3. TECH & SCIENCE",
-        "4. RANDOM MIX"
+        "4. RANDOM"
     };
 
     for(int i = 0; i < 4; i++) 
@@ -57,21 +57,21 @@ GameState category_handle_click(int mx, int my)
     for(int i = 0; i < 4; i++) 
     {
         int ty = y_start + (i * spacing);
+
         if (mx >= x && mx <= x + btn_w && my >= ty && my <= ty + btn_h) 
         {
             char filename[32];
-            
+
             if (i == 3) 
             {
-                // We pass "random" so intro_init knows to show the Random Mix screen
-                strcpy(filename, "random");
+                int r = rand() % 3 + 1;
+                sprintf(filename, "data/puzzle%d.txt", r);
             } 
             else 
             {
                 sprintf(filename, "data/puzzle%d.txt", i + 1);
             }
 
-            // ⭐ IMPORTANT: Initialize intro first
             intro_init(filename); 
             return STATE_INTRO;
         }
